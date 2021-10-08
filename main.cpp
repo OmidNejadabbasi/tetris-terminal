@@ -3,6 +3,9 @@
 using namespace std;
 
 wstring tetrominos[7];
+int fieldWidth = 12;
+int fieldHeight = 18;
+unsigned char *pField = nullptr;
 
 int Rotate(int px, int py, int r)
 {
