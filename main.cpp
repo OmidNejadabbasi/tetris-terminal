@@ -62,5 +62,10 @@ int main(int argc, const char **argv)
     tetrominos[6].append(L"..X.");
     tetrominos[6].append(L"..X.");
 
+    pField = new unsigned char[fieldHeight * fieldWidth];
+    for (int x = 0; x < fieldWidth; x++)
+        for (int y = 0; y < fieldHeight; y++)
+            pField[y * fieldWidth + x] = (x == 0 || x == fieldWidth - 1 || y == fieldHeight - 1) ? 9 : 0;
+
     return 0;
 }
