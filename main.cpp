@@ -78,7 +78,15 @@ int main(int argc, const char **argv)
                                                0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
     SetConsoleActiveScreenBuffer(Console);
 
-    DWORD mwBytesWritten = 0;
+    DWORD dwBytesWritten = 0;
 
+    bool gameOver = false;
+    while (!gameOver)
+    {
+
+        
+        // Disply console frame
+        WriteConsoleOutputCharacter(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
+    }
     return 0;
 }
