@@ -1,11 +1,14 @@
 #include <iostream>
-
+#include <windows.h>
 using namespace std;
 
 wstring tetrominos[7];
 int fieldWidth = 12;
 int fieldHeight = 18;
 unsigned char *pField = nullptr;
+
+int nScreenWidth = 80;
+int nScreenHeight = 30;
 
 int Rotate(int px, int py, int r)
 {
@@ -66,6 +69,16 @@ int main(int argc, const char **argv)
     for (int x = 0; x < fieldWidth; x++)
         for (int y = 0; y < fieldHeight; y++)
             pField[y * fieldWidth + x] = (x == 0 || x == fieldWidth - 1 || y == fieldHeight - 1) ? 9 : 0;
+
+    wchar_t *screen = new wchar_t[nScreenWidth * nScreenHeight];
+    for (int i = 0; i < nScreenHeight * nScreenWidth; i++)
+        screen[i] = L' ';
+
+    HANDLE Console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,
+                                               0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+    SetConsoleActiveScreenBuffer(Console);
+
+    DWORD mwBytesWritten = 0;
 
     return 0;
 }
