@@ -1,5 +1,5 @@
 #include <iostream>
-#include <windows.h>
+#include <Windows.h>
 using namespace std;
 
 wstring tetrominos[7];
@@ -84,9 +84,17 @@ int main(int argc, const char **argv)
     while (!gameOver)
     {
 
-        
+        // Draw the screen
+        for (int x = 0; x < fieldWidth; x++)
+        {
+            for (int y = 0; y < fieldHeight; y++)
+            {
+                screen[(y + 2) * nScreenWidth + x + 2] = L" ▤▩▧▣▤▧▣=#"[pField[y * fieldWidth + x]];
+            }
+        }
+        std::cin >> nScreenHeight;
         // Disply console frame
-        WriteConsoleOutputCharacter(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
+        WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
     }
     return 0;
 }
