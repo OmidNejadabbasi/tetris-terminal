@@ -1,5 +1,6 @@
 #include <iostream>
-#include <Windows.h>
+#include <windows.h>
+#include <thread>
 using namespace std;
 
 wstring tetrominos[7];
@@ -39,7 +40,7 @@ bool DoesPieceFit(int idTetromino, int rotation, int posX, int posY)
             {
                 if (posY + y < fieldHeight && posY + y >= 0)
                 {
-                    if (tetrominos[idTetromino][pi] == L"X" && pField[fi] != 0)
+                    if (tetrominos[idTetromino][pi] == L'X' && pField[fi] != 0)
                     {
                         return false;
                     }
@@ -104,11 +105,19 @@ int main(int argc, const char **argv)
 
     DWORD dwBytesWritten = 0;
 
+    int currentPiece = 4;
+    int currentRotation = 0;
+    int currentX = fieldWidth / 2;
+    int currentY = 0;
+
+    bool bKey[4];
+
     bool gameOver = false;
     while (!gameOver)
     {
 
         // GAME TIMING =======================================
+        this_thread::sleep_for(50ms);
 
         // INPUT =============================================
 
@@ -124,6 +133,14 @@ int main(int argc, const char **argv)
                 screen[(y + 2) * nScreenWidth + x + 2] = L" ▤▩▧▣▤▧▣=#"[pField[y * fieldWidth + x]];
             }
         }
+
+        // Draw the current piece
+        for (int px = 0; px < 4; px++)
+            for (int py = 0; py < 4; py++)
+                if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
+                {
+                    screen[(currentY + py + 2) * nScreenWidth + currentX + px + 2] = currentPiece + 65;
+                }
 
         // Disply console frame
         WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
