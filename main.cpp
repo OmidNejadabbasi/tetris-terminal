@@ -120,6 +120,8 @@ int main(int argc, const char **argv)
         this_thread::sleep_for(50ms);
 
         // INPUT =============================================
+        for (int k = 0; k < 4; k++)                       //     R   L   D  Z
+            bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)"\x27\x25\x28Z"[k])) != 0;
 
         // GAME LOGIC ========================================
 
