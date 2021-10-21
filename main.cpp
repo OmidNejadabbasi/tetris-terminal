@@ -164,30 +164,54 @@ int main(int argc, const char **argv)
                     for (int py = 0; py < 4; py++)
                         if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
                         {
-                            pField[(currentY + py) * fieldWidth + currentX + px + 2] = currentPiece + 65;
+                            pField[(currentY + py) * fieldWidth + currentX + px] = currentPiece + 1;
                         }
-            }
-            // RENDER ============================================
-
-            // Draw the screen
-            for (int x = 0; x < fieldWidth; x++)
-            {
-                for (int y = 0; y < fieldHeight; y++)
-                {
-                    screen[(y + 2) * nScreenWidth + x + 2] = L" ▤▩▧▣▤▧▣=#"[pField[y * fieldWidth + x]];
-                }
-            }
-
-            // Draw the current piece
-            for (int px = 0; px < 4; px++)
+                // check if we got a line
                 for (int py = 0; py < 4; py++)
-                    if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
+                {
+                    if (currentY + py < fieldHeight - 1)
                     {
-                        screen[(currentY + py + 2) * nScreenWidth + currentX + px + 2] = currentPiece + 65;
-                    }
+                        bool line = true;
+                        for (int px = 1; px < fieldWidth - 1; px++)
+                            line &= (pField[(currentY + py) * fieldWidth + px] != 0);
 
-            // Disply console frame
-            WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
+                        if (line)
+                            for (int px = 1; px < fieldWidth - 1; px++)
+                                pField[(currentY + py) * fieldWidth + px] = 8;
+                    }
+                }
+
+                // choose the next piece
+                currentY = 0;
+                currentX = fieldWidth / 2 - 1;
+                currentPiece = rand() % 7;
+                currentRotation = 0;
+
+                // if game over
+                gameOver = !DoesPieceFit(currentPiece, currentRotation, currentX, currentY);
+            }
+            speedCounter = 0;
         }
-        return 0;
+        // RENDER ============================================
+        // Draw the screen
+        for (int x = 0; x < fieldWidth; x++)
+        {
+            for (int y = 0; y < fieldHeight; y++)
+            {
+                screen[(y + 2) * nScreenWidth + x + 2] = L" ABCDEFG=#"[pField[y * fieldWidth + x]];
+            }
+        }
+
+        // Draw the current piece
+        for (int px = 0; px < 4; px++)
+            for (int py = 0; py < 4; py++)
+                if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
+                {
+                    screen[(currentY + py + 2) * nScreenWidth + currentX + px + 2] = currentPiece + 65;
+                }
+
+        // Disply console frame
+        WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
     }
+    return 0;
+}
