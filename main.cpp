@@ -111,6 +111,7 @@ int main(int argc, const char **argv)
     int currentY = 0;
 
     bool bKey[4];
+    bool rotateHold = false;
 
     bool gameOver = false;
     while (!gameOver)
@@ -145,6 +146,17 @@ int main(int argc, const char **argv)
                 currentY++;
             }
         }
+        if (bKey[3])
+        {
+
+            if (!rotateHold && DoesPieceFit(currentPiece, currentRotation + 1, currentX, currentY))
+            {
+                currentRotation++;
+            }
+            rotateHold = true;
+        }
+        else
+            rotateHold = false;
         // RENDER ============================================
 
         // Draw the screen
