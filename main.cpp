@@ -29,7 +29,7 @@ int Rotate(int px, int py, int r)
 
 bool DoesPieceFit(int idTetromino, int rotation, int posX, int posY)
 {
-    for (size_t x = 0; x < 4; x++)
+    for (int x = 0; x < 4; x++)
         for (int y = 0; y < 4; y++)
         {
             int pi = Rotate(x, y, rotation);
@@ -120,11 +120,31 @@ int main(int argc, const char **argv)
         this_thread::sleep_for(50ms);
 
         // INPUT =============================================
-        for (int k = 0; k < 4; k++)                       //     R   L   D  Z
+        for (int k = 0; k < 4; k++) //     R   L   D  Z
             bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)"\x27\x25\x28Z"[k])) != 0;
 
         // GAME LOGIC ========================================
-
+        if (bKey[1])
+        {
+            if (DoesPieceFit(currentPiece, currentRotation, currentX - 1, currentY))
+            {
+                currentX--;
+            }
+        }
+        if (bKey[0])
+        {
+            if (DoesPieceFit(currentPiece, currentRotation, currentX + 1, currentY))
+            {
+                currentX++;
+            }
+        }
+        if (bKey[2])
+        {
+            if (DoesPieceFit(currentPiece, currentRotation, currentX, currentY + 1))
+            {
+                currentY++;
+            }
+        }
         // RENDER ============================================
 
         // Draw the screen
