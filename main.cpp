@@ -113,12 +113,18 @@ int main(int argc, const char **argv)
     bool bKey[4];
     bool rotateHold = false;
 
+    int speed = 20;
+    int speedCounter = 0;
+    bool forceThePieceDown = false;
+
     bool gameOver = false;
     while (!gameOver)
     {
 
         // GAME TIMING =======================================
         this_thread::sleep_for(50ms);
+        speedCounter++;
+        forceThePieceDown = (speedCounter == speed);
 
         // INPUT =============================================
         for (int k = 0; k < 4; k++) //     R   L   D  Z
@@ -126,26 +132,14 @@ int main(int argc, const char **argv)
 
         // GAME LOGIC ========================================
         if (bKey[1])
-        {
             if (DoesPieceFit(currentPiece, currentRotation, currentX - 1, currentY))
-            {
                 currentX--;
-            }
-        }
         if (bKey[0])
-        {
             if (DoesPieceFit(currentPiece, currentRotation, currentX + 1, currentY))
-            {
                 currentX++;
-            }
-        }
         if (bKey[2])
-        {
             if (DoesPieceFit(currentPiece, currentRotation, currentX, currentY + 1))
-            {
                 currentY++;
-            }
-        }
         if (bKey[3])
         {
 
@@ -157,27 +151,43 @@ int main(int argc, const char **argv)
         }
         else
             rotateHold = false;
-        // RENDER ============================================
 
-        // Draw the screen
-        for (int x = 0; x < fieldWidth; x++)
+        if (forceThePieceDown)
         {
-            for (int y = 0; y < fieldHeight; y++)
+            if (DoesPieceFit(currentPiece, currentRotation, currentX, currentY + 1))
+                currentY++;
+            else
             {
-                screen[(y + 2) * nScreenWidth + x + 2] = L" ▤▩▧▣▤▧▣=#"[pField[y * fieldWidth + x]];
+
+                // Lock the current piece down
+                for (int px = 0; px < 4; px++)
+                    for (int py = 0; py < 4; py++)
+                        if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
+                        {
+                            pField[(currentY + py) * fieldWidth + currentX + px + 2] = currentPiece + 65;
+                        }
             }
-        }
+            // RENDER ============================================
 
-        // Draw the current piece
-        for (int px = 0; px < 4; px++)
-            for (int py = 0; py < 4; py++)
-                if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
+            // Draw the screen
+            for (int x = 0; x < fieldWidth; x++)
+            {
+                for (int y = 0; y < fieldHeight; y++)
                 {
-                    screen[(currentY + py + 2) * nScreenWidth + currentX + px + 2] = currentPiece + 65;
+                    screen[(y + 2) * nScreenWidth + x + 2] = L" ▤▩▧▣▤▧▣=#"[pField[y * fieldWidth + x]];
                 }
+            }
 
-        // Disply console frame
-        WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
+            // Draw the current piece
+            for (int px = 0; px < 4; px++)
+                for (int py = 0; py < 4; py++)
+                    if (tetrominos[currentPiece][Rotate(px, py, currentRotation)] == L'X')
+                    {
+                        screen[(currentY + py + 2) * nScreenWidth + currentX + px + 2] = currentPiece + 65;
+                    }
+
+            // Disply console frame
+            WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
+        }
+        return 0;
     }
-    return 0;
-}
