@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <thread>
+#include <vector>
 using namespace std;
 
 wstring tetrominos[7];
@@ -117,6 +118,7 @@ int main(int argc, const char **argv)
     int speedCounter = 0;
     bool forceThePieceDown = false;
 
+    vector<int> lines;
     bool gameOver = false;
     while (!gameOver)
     {
@@ -176,8 +178,12 @@ int main(int argc, const char **argv)
                             line &= (pField[(currentY + py) * fieldWidth + px] != 0);
 
                         if (line)
+                        {
                             for (int px = 1; px < fieldWidth - 1; px++)
                                 pField[(currentY + py) * fieldWidth + px] = 8;
+
+                            lines.push_back(currentY + py);
+                        }
                     }
                 }
 
@@ -210,6 +216,22 @@ int main(int argc, const char **argv)
                     screen[(currentY + py + 2) * nScreenWidth + currentX + px + 2] = currentPiece + 65;
                 }
 
+        if (!lines.empty())
+        {
+            WriteConsoleOutputCharacterW(Console, screen, nScreenWidth * nScreenHeight, {0, 0}, &dwBytesWritten);
+
+            this_thread::sleep_for(400ms); // delay a bit
+            for (auto &v : lines)
+                for (int px = 1; px < fieldWidth - 1; px++)
+                {
+                    for (int py = v; py > 0; py--)
+                    {
+                        pField[py * fieldWidth + px] = pField[(py - 1) * fieldWidth + px];
+                    }
+                    pField[px] = 0;
+                }
+            lines.clear();
+        }
         // Disply console frame
         WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
     }
