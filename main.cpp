@@ -118,6 +118,9 @@ int main(int argc, const char **argv)
     int speedCounter = 0;
     bool forceThePieceDown = false;
 
+    int piecesPlayed = 0;
+
+    int score = 0;
     vector<int> lines;
     bool gameOver = false;
     while (!gameOver)
@@ -168,6 +171,11 @@ int main(int argc, const char **argv)
                         {
                             pField[(currentY + py) * fieldWidth + currentX + px] = currentPiece + 1;
                         }
+                piecesPlayed++;
+                if (piecesPlayed % 10 == 0 && speed > 9)
+                {
+                    speed--;
+                }
                 // check if we got a line
                 for (int py = 0; py < 4; py++)
                 {
@@ -186,7 +194,9 @@ int main(int argc, const char **argv)
                         }
                     }
                 }
-
+                score += 25;
+                if (!lines.empty())
+                    score += (1 << lines.size()) * 100;
                 // choose the next piece
                 currentY = 0;
                 currentX = fieldWidth / 2 - 1;
@@ -195,6 +205,9 @@ int main(int argc, const char **argv)
 
                 // if game over
                 gameOver = !DoesPieceFit(currentPiece, currentRotation, currentX, currentY);
+
+                // display the score
+                swprintf_s(&screen[2 * fieldHeight + fieldWidth + 6], 16, L"Score: %8d", score);
             }
             speedCounter = 0;
         }
@@ -235,5 +248,9 @@ int main(int argc, const char **argv)
         // Disply console frame
         WriteConsoleOutputCharacterW(Console, screen, nScreenHeight * nScreenWidth, {0, 0}, &dwBytesWritten);
     }
+
+    CloseHandle(Console);
+    cout << "Yout final score : " << score << endl;
+    system("pause");
     return 0;
 }
